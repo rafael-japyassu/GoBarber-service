@@ -1,14 +1,16 @@
 import 'reflect-metadata';
 import express, { NextFunction, Response, Request } from 'express';
 import 'express-async-errors';
+import cors from 'cors';
 
 import { resolve } from 'path';
-import AppError from './errors/AppError';
+import AppError from '@shared/errors/AppError';
 import routes from './routes';
-import './database';
+import '@shared/infra/typeorm';
 
 const app = express();
 
+app.use(cors());
 app.use(express.json());
 app.use('/files', express.static(resolve(__dirname, '..', 'tmp')));
 app.use(routes);

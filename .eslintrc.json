@@ -24,6 +24,7 @@
     "no-unused-vars": ["error", {
       "argsIgnorePattern": "_"
     }],
+    "no-useless-constructor": "off",
     "camelcase": "off",
     "class-methods-use-this": "off",
     "import/extensions": [
