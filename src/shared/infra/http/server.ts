@@ -7,6 +7,7 @@ import { resolve } from 'path';
 import AppError from '@shared/errors/AppError';
 import routes from './routes';
 import '@shared/infra/typeorm';
+import '@shared/container';
 
 const app = express();
 
@@ -15,6 +16,7 @@ app.use(express.json());
 app.use('/files', express.static(resolve(__dirname, '..', 'tmp')));
 app.use(routes);
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 app.use((err: Error, request: Request, response: Response, _: NextFunction) => {
   if (err instanceof AppError) {
     return response.status(err.statuesCode).json({
@@ -22,7 +24,7 @@ app.use((err: Error, request: Request, response: Response, _: NextFunction) => {
       message: err.message,
     });
   }
-
+  console.log(err);
   return response.status(500).json({
     status: 'error',
     message: 'Internal server error',

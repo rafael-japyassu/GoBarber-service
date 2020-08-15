@@ -1,10 +1,10 @@
-import { compare } from 'bcryptjs';
 import { sign } from 'jsonwebtoken';
 import AppError from '@shared/errors/AppError';
 import authConfing from '@config/auth';
-
+import { inject, injectable } from 'tsyringe';
 import User from '../infra/typeorm/entities/User';
-import UsersRepository from '../infra/typeorm/repositories/UsersRepository';
+import { IUsersRepository } from '../repositories/IUsersRepository';
+import { IHashProvider } from '../providers/HashProviders/models/IHashProvider';
 
 interface Request {
   email: string;
@@ -16,11 +16,20 @@ interface Response {
   token: string;
 }
 
+@injectable()
 class AuthenticateUserService {
-  private usersRepository: UsersRepository;
+  private usersRepository: IUsersRepository;
 
-  constructor(usersRepository: UsersRepository) {
+  private hashProvider: IHashProvider;
+
+  constructor(
+    @inject('UsersRepository')
+      usersRepository: IUsersRepository,
+      @inject('HashProvider')
+      hashProvider: IHashProvider,
+  ) {
     this.usersRepository = usersRepository;
+    this.hashProvider = hashProvider;
   }
 
   public async execute({ email, password }: Request): Promise<Response> {
@@ -30,7 +39,7 @@ class AuthenticateUserService {
       throw new AppError('Incorrect email/password combination.', 401);
     }
 
-    const passwordMatched = await compare(password, user.password);
+    const passwordMatched = await this.hashProvider.compareHash(password, user.password);
 
     if (!passwordMatched) {
       throw new AppError('Incorrect email/password combination.', 401);

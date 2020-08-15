@@ -1,10 +1,15 @@
 import { resolve } from 'path';
 import { randomBytes } from 'crypto';
-import { diskStorage, Options } from 'multer';
+import { diskStorage } from 'multer';
+
+const tmpFolder = resolve(__dirname, '..', '..', 'tmp');
 
 export default {
+  tmpFolder,
+  uploadsFolder: resolve(tmpFolder, 'uploads'),
+
   storage: diskStorage({
-    destination: resolve(__dirname, '..', '..', 'tmp'),
+    destination: tmpFolder,
     filename(request, file, callback) {
       const fileHash = randomBytes(10).toString('hex');
       const fileName = `${fileHash}-${file.originalname}`;
@@ -12,4 +17,4 @@ export default {
       return callback(null, fileName);
     },
   }),
-} as Options;
+};
