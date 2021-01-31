@@ -1,5 +1,7 @@
 import 'reflect-metadata';
+import 'dotenv/config';
 import express, { NextFunction, Response, Request } from 'express';
+import { errors } from 'celebrate';
 import 'express-async-errors';
 import cors from 'cors';
 
@@ -13,8 +15,9 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
-app.use('/files', express.static(resolve(__dirname, '..', 'tmp')));
+app.use('/files', express.static(resolve(__dirname, '..', '..', '..', '..', 'tmp')));
 app.use(routes);
+app.use(errors());
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 app.use((err: Error, request: Request, response: Response, _: NextFunction) => {

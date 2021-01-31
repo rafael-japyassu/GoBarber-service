@@ -2,7 +2,7 @@ import { Response, Request } from 'express';
 import { container } from 'tsyringe';
 import CreateUserService from '@modules/users/services/CreateUserService';
 import UpdateUserAvatarService from '@modules/users/services/UpdateUserAvatarService';
-import AuthenticateUserService from '@modules/users/services/AuthenticateUserService';
+import { classToClass } from 'class-transformer';
 
 export default class UsersController {
   public async create(request: Request, response: Response): Promise<Response> {
@@ -15,9 +15,7 @@ export default class UsersController {
       password,
     });
 
-    delete user.password;
-
-    return response.json(user);
+    return response.json(classToClass(user));
   }
 
   public async updateAvatar(request: Request, response: Response): Promise<Response> {
@@ -27,22 +25,6 @@ export default class UsersController {
       avatarFilename: request.file.filename,
     });
 
-    delete user.password;
-
-    return response.json(user);
-  }
-
-  public async session(request: Request, response: Response): Promise<Response> {
-    const { email, password } = request.body;
-
-    const autheticateUser = container.resolve(AuthenticateUserService);
-    const { user, token } = await autheticateUser.execute({
-      email,
-      password,
-    });
-
-    delete user.password;
-
-    return response.json({ user, token });
+    return response.json(classToClass(user));
   }
 }
